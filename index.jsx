@@ -22,11 +22,7 @@ export {
   DynamicRoutes, 
 
   ImmunizationsPage,
-  ImmunizationsTable,
-
-  Immunization,
-  Immunizations,
-  ImmunizationSchema
+  ImmunizationsTable
 };
 
 
