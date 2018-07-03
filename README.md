@@ -1,4 +1,4 @@
-## clinical:hl7-resource-immunization
+##clinical:hl7-resource-immunization
 
 #### Licensing  
 
@@ -56,7 +56,3 @@ Immunizations.attachSchema( ExtendedImmunizationSchema );
 If you're working with HL7 FHIR Resources, we recommend using [Postman](https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en).
 
 
-
-#### Licensing  
-
-![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
