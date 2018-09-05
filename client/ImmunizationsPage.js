@@ -24,8 +24,16 @@ export class ImmunizationsPage extends React.Component {
       },
       tabIndex: Session.get('immunizationPageTabIndex'),
       immunizationSearchFilter: Session.get('immunizationSearchFilter'),
-      currentImmunization: Session.get('selectedImmunization')
+      selectedImmunizationId: Session.get('selectedImmunizationId'),
+      fhirVersion: Session.get('fhirVersion'),
+      selectedImmunization: false
     };
+
+    if (Session.get('selectedImmunizationId')){
+      data.selectedImmunization = Immunizations.findOne({_id: Session.get('selectedImmunizationId')});
+    } else {
+      data.selectedImmunization = false;
+    }
 
     data.style = Glass.blur(data.style);
     data.style.appbar = Glass.darkroom(data.style.appbar);
@@ -39,12 +47,12 @@ export class ImmunizationsPage extends React.Component {
   }
 
   onNewTab(){
-    Session.set('selectedImmunization', false);
+    Session.set('selectedImmunizationId', false);
     Session.set('immunizationUpsert', false);
   }
 
   render() {
-    if(process.env.NODE_ENV === "test") console.log('In ImmunizationsPage render');
+    if(process.env.NODE_ENV === "test") console.log('ImmunizationsPage.render()', this.data);
     return (
       <div id='immunizationsPage'>
         <VerticalCanvas>
@@ -53,14 +61,22 @@ export class ImmunizationsPage extends React.Component {
             <CardText>
               <Tabs id="immunizationsPageTabs" default value={this.data.tabIndex} onChange={this.handleTabChange} initialSelectedIndex={1}>
                <Tab className='newImmunizationTab' label='New' style={this.data.style.tab} onActive={ this.onNewTab } value={0}>
-                 <ImmunizationDetail id='newImmunization' />
+                 <ImmunizationDetail 
+                  id='newImmunization' 
+                  fhirVersion={ this.data.fhirVersion }
+                  immunizationId={ this.data.selectedImmunizationId } />  
                </Tab>
                <Tab className="immunizationListTab" label='Immunizations' onActive={this.handleActive} style={this.data.style.tab} value={1}>
-                <ImmunizationsTable />
+                <ImmunizationsTable 
+                  displayDates={true}
+                />
                </Tab>
                <Tab className="immunizationDetailsTab" label='Detail' onActive={this.handleActive} style={this.data.style.tab} value={2}>
                  <ImmunizationDetail 
                   id='immunizationDetails' 
+                  fhirVersion={ this.data.fhirVersion }
+                  immunization={ this.data.selectedImmunization }
+                  immunizationId={ this.data.selectedImmunizationId }
                   showDatePicker={true} 
                   />
                </Tab>

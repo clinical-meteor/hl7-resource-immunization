@@ -5,13 +5,11 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import { Table } from 'react-bootstrap';
 import Toggle from 'material-ui/Toggle';
+import { get } from 'lodash';
 
-export default class ImmunizationsTable extends React.Component {
+export class ImmunizationsTable extends React.Component {
 
   getMeteorData() {
-
-    // this should all be handled by props
-    // or a mixin!
     let data = {
       style: {
         opacity: Session.get('globalOpacity')
@@ -32,12 +30,11 @@ export default class ImmunizationsTable extends React.Component {
       data.immunizations = this.props.data;
     } else {
       if(Immunizations.find({}, {$sort: {'identifier.type.text': 1}}).count() > 0){
-        data.immunizations = Immunizations.find().fetch();
+        data.immunizations = Immunizations.find({}, {$sort: {'identifier.type.text': 1}}).fetch();
       }
     }
-    //if(process.env.NODE_ENV === "test"){
-      console.log("ImmunizationsTable[data]", data)
-    //};
+    if(process.env.NODE_ENV === "test") console.log("ImmunizationsTable[data]", data);
+
     return data;
   };
 
@@ -55,7 +52,6 @@ export default class ImmunizationsTable extends React.Component {
         <td className="toggle">
             <Toggle
               defaultToggled={true}
-              //style={styles.toggle}
             />
           </td>
       );
@@ -76,77 +72,51 @@ export default class ImmunizationsTable extends React.Component {
     }
   }
 
-
   rowClick(id){
     Session.set('immunizationsUpsert', false);
-    Session.set('selectedImmunization', id);
+    Session.set('selectedImmunizationId', id);
     Session.set('immunizationPageTabIndex', 2);
   };
   render () {
     console.log('this.data', this.data)
 
-      let tableRows = [];
+    let tableRows = [];
     for (var i = 0; i < this.data.immunizations.length; i++) {
-      console.log('this.data.immunizations[i]', this.data.immunizations[i])
-      var newRow = {
-        status: '',
-        notGiven: '',
-        identifier: '',
-        vaccine: '',
-        snomedCode: '',
-        snomedDisplay: '',
-        evidenceDisplay: '',
-        barcode: ''
-      };
-      if (this.data.immunizations[i]){
-        if(this.data.immunizations[i].status){
-          newRow.status = this.data.immunizations[i].status;
-        }
-        if(this.data.immunizations[i].notGiven){
-          newRow.notGiven = this.data.immunizations[i].notGiven;
-        }
-
-        if(this.data.immunizations[i].identifier && this.data.immunizations[i].identifier[0]){
-          console.log('this.data.immunizations[i].identifier', this.data.immunizations[i].identifier)
-          this.data.immunizations[i].identifier.forEach(function(record){
-            console.log('record', record)
-
-            if(record.use == 'official'){              
-              newRow.identifier = record.type.text;
-            }
-            if(record.use == 'secondary'){
-              newRow.vaccine = newRow.vaccine + ' ' + record.type.text;
-            }
-
-          });
-        }
-        if(this.data.immunizations[i].vaccineCode && this.data.immunizations[i].vaccineCode.text){
-          newRow.vaccineCode = this.data.immunizations[i].vaccineCode.text;
-        }     
-        if(this.data.immunizations[i]._id){
-          newRow.barcode = this.data.immunizations[i]._id;
-        }
+      let newRow = {
+        patientDisplay: get(this.data.immunizations[i], 'patient.display'),
+        patientReference: get(this.data.immunizations[i], 'patient.reference'),
+        performerDisplay: get(this.data.immunizations[i], 'performer.display'),
+        performerReference: get(this.data.immunizations[i], 'performer.reference'),
+        identifier: get(this.data.immunizations[i], 'identifier[0].value'),
+        status: get(this.data.immunizations[i], 'status'),
+        vaccineCode: get(this.data.immunizations[i], 'vaccineCode.text'),
+        reported: get(this.data.immunizations[i], 'reported'),
+        date: get(this.data.immunizations[i], 'date')
       }
 
       tableRows.push(
         <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
           { this.renderToggles(this.data.displayToggle, this.data.immunizations[i]) }
           <td className='identifier'>{ newRow.identifier }</td>
-          <td className='vaccine'>{ newRow.vaccine }</td>
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
-          { this.renderDate(this.data.displayDates, this.data.immunizations[i].date) }
+          <td className='status'>{ newRow.status }</td>
+          <td className='patient'>{ newRow.patientDisplay }</td>
+          <td className='performer'>{ newRow.performerDisplay }</td>
+          { this.renderDate(this.data.displayDates, newRow.derate) }
         </tr>
       )
     }
 
     return(
-      <Table id='immunizationsTable' responses hover >
+      <Table id='immunizationsTable' hover >
         <thead>
           <tr>
             { this.renderTogglesHeader(this.data.displayToggle) }
             <th className='identifier'>identifier</th>
-            <th className='vaccine'>vaccine</th>
             <th className='vaccineCode'>vaccineCode</th>
+            <th className='status'>status</th>
+            <th className='patient'>patient</th>
+            <th className='performer'>performer</th>
             { this.renderDateHeader(this.data.displayDates) }
           </tr>
         </thead>
@@ -160,3 +130,4 @@ export default class ImmunizationsTable extends React.Component {
 
 
 ReactMixin(ImmunizationsTable.prototype, ReactMeteorData);
+export default ImmunizationsTable;
