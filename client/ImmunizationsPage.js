@@ -5,12 +5,13 @@ import { GlassCard, VerticalCanvas, Glass } from 'meteor/clinical:glass-ui';
 import ImmunizationDetail from './ImmunizationDetail';
 import ImmunizationsTable from './ImmunizationsTable';
 
-import { Meteor } from 'meteor/meteor';
 import { Session } from 'meteor/session';
 
 import React  from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin  from 'react-mixin';
+
+Session.setDefault('fhirVersion', 'v1.0.2');
 
 export class ImmunizationsPage extends React.Component {
   getMeteorData() {
