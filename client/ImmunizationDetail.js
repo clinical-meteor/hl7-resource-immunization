@@ -370,7 +370,7 @@ export class ImmunizationDetail extends React.Component {
 
       Immunizations.update(
         {_id: this.props.immunizationId}, {$set: fhirImmunizationData }, {
-          validate: false, 
+          validate: true, 
           filter: false, 
           removeEmptyStrings: false
         }, function(error, result) {
@@ -414,7 +414,7 @@ export class ImmunizationDetail extends React.Component {
       // });
 
       Immunizations.insert(fhirImmunizationData, {
-        validate: false, 
+        validate: true, 
         filter: false, 
         removeEmptyStrings: false
       }, function(error, result) {
