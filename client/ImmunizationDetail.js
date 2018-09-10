@@ -370,9 +370,9 @@ export class ImmunizationDetail extends React.Component {
 
       Immunizations.update(
         {_id: this.props.immunizationId}, {$set: fhirImmunizationData }, {
-          validate: true, 
-          filter: false, 
-          removeEmptyStrings: false
+          validate: get(Meteor, 'settings.public.defaults.schemas.validate', false), 
+          filter: get(Meteor, 'settings.public.defaults.schemas.filter', false), 
+          removeEmptyStrings: get(Meteor, 'settings.public.defaults.schemas.removeEmptyStrings', false)
         }, function(error, result) {
           if (error) {
             console.log("error", error);
@@ -414,9 +414,9 @@ export class ImmunizationDetail extends React.Component {
       // });
 
       Immunizations.insert(fhirImmunizationData, {
-        validate: true, 
-        filter: false, 
-        removeEmptyStrings: false
+        validate: get(Meteor, 'settings.public.defaults.schemas.validate', false), 
+        filter: get(Meteor, 'settings.public.defaults.schemas.filter', false), 
+        removeEmptyStrings: get(Meteor, 'settings.public.defaults.schemas.removeEmptyStrings', false)
       }, function(error, result) {
         if (error) {
           console.log("error", error);
