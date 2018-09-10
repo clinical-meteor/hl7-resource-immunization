@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 import { Col, Grid, Row } from 'react-bootstrap';
 
 
-Session.setDefault('immunizationUpsert', false);
 Session.setDefault('selectedImmunization', false);
 
 export class ImmunizationDetail extends React.Component {
@@ -368,12 +367,8 @@ export class ImmunizationDetail extends React.Component {
       if(process.env.NODE_ENV === "test") console.log("Updating immunization...");
       delete fhirImmunizationData._id;
 
-      Immunizations.update(
-        {_id: this.props.immunizationId}, {$set: fhirImmunizationData }, {
-          validate: get(Meteor, 'settings.public.defaults.schemas.validate', false), 
-          filter: get(Meteor, 'settings.public.defaults.schemas.filter', false), 
-          removeEmptyStrings: get(Meteor, 'settings.public.defaults.schemas.removeEmptyStrings', false)
-        }, function(error, result) {
+      Immunizations._collection.update(
+        {_id: this.props.immunizationId}, {$set: fhirImmunizationData }, function(error, result) {
           if (error) {
             console.log("error", error);
 
@@ -413,11 +408,7 @@ export class ImmunizationDetail extends React.Component {
       //   }
       // });
 
-      Immunizations.insert(fhirImmunizationData, {
-        validate: get(Meteor, 'settings.public.defaults.schemas.validate', false), 
-        filter: get(Meteor, 'settings.public.defaults.schemas.filter', false), 
-        removeEmptyStrings: get(Meteor, 'settings.public.defaults.schemas.removeEmptyStrings', false)
-      }, function(error, result) {
+      Immunizations._collection.insert(fhirImmunizationData, function(error, result) {
         if (error) {
           console.log("error", error);
           Bert.alert(error.reason, 'danger');
@@ -426,7 +417,6 @@ export class ImmunizationDetail extends React.Component {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Immunizations", recordId: result});
           Session.set('immunizationPageTabIndex', 1);
           Session.set('selectedImmunization', false);
-          Session.set('immunizationUpsert', false);
           Bert.alert('Immunization added!', 'success');
         }
       });
@@ -447,7 +437,6 @@ export class ImmunizationDetail extends React.Component {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Immunizations", recordId: self.props.immunizationId});
         Session.set('immunizationPageTabIndex', 1);
         Session.set('selectedImmunization', false);
-        Session.set('immunizationUpsert', false);
         Bert.alert('Immunization removed!', 'success');
       }
     });
