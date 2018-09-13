@@ -429,7 +429,7 @@ export class ImmunizationDetail extends React.Component {
 
   handleDeleteButton(){
     let self = this;
-    Immunizations.remove({_id: this.props.immunizationId}, function(error, result){
+    Immunizations._collection.remove({_id: this.props.immunizationId}, function(error, result){
       if (error) {
         Bert.alert(error.reason, 'danger');
       }
