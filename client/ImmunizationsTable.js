@@ -38,7 +38,16 @@ export class ImmunizationsTable extends React.Component {
     return data;
   };
 
-
+  displayOnMobile(width){
+    let style = {};
+    if(['iPhone'].includes(window.navigator.platform)){
+      style.display = "none";
+    }
+    if(width){
+      style.width = width;
+    }
+    return style;
+  }
   renderTogglesHeader(displayToggle){
     if (displayToggle) {
       return (
@@ -97,11 +106,11 @@ export class ImmunizationsTable extends React.Component {
       tableRows.push(
         <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
           { this.renderToggles(this.data.displayToggle, this.data.immunizations[i]) }
-          <td className='identifier'>{ newRow.identifier }</td>
+          <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td>
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
-          <td className='status'>{ newRow.status }</td>
-          <td className='patient'>{ newRow.patientDisplay }</td>
-          <td className='performer'>{ newRow.performerDisplay }</td>
+          <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
+          <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td>
+          <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td>
           { this.renderDate(this.data.displayDates, newRow.derate) }
         </tr>
       )
@@ -112,11 +121,11 @@ export class ImmunizationsTable extends React.Component {
         <thead>
           <tr>
             { this.renderTogglesHeader(this.data.displayToggle) }
-            <th className='identifier'>identifier</th>
+            <th className='identifier' style={this.displayOnMobile()} >identifier</th>
             <th className='vaccineCode'>vaccineCode</th>
-            <th className='status'>status</th>
-            <th className='patient'>patient</th>
-            <th className='performer'>performer</th>
+            <th className='status' style={this.displayOnMobile()} >status</th>
+            <th className='patient' style={this.displayOnMobile()} >patient</th>
+            <th className='performer' style={this.displayOnMobile()} >performer</th>
             { this.renderDateHeader(this.data.displayDates) }
           </tr>
         </thead>
