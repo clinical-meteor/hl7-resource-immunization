@@ -7,9 +7,10 @@ import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import TextField from 'material-ui/TextField';
 import { browserHistory } from 'react-router';
+
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
-import { Col, Grid, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 
 
 Session.setDefault('selectedImmunization', false);
@@ -100,31 +101,39 @@ export class ImmunizationDetail extends React.Component {
 
     if(this.props.immunization){
       data.immunization = this.props.immunization;
+      data.form = this.dehydrateFhirResource(this.props.immunization);
     }
 
     console.log('ImmunizationDetail[data]', data);
     return data;
   }
-  renderDatePicker(showDatePicker, datePickerValue){
-    if (typeof datePickerValue === "string"){
-      datePickerValue = new Date(datePickerValue);
+  renderDatePicker(showDatePicker, effectiveDateTime){
+    if (typeof effectiveDateTime === "string"){
+      effectiveDateTime = moment(effectiveDateTime);
     }
     if (showDatePicker) {
       return (
         <DatePicker 
           name='datePicker'
-          hintText="Date of Administration" 
+          hintText={this.setHint("Date of Administration" )}
           container="inline" 
           mode="landscape"
-          value={ datePickerValue ? datePickerValue : ''}    
-          onChange={ this.changeState.bind(this, 'datePicker')}      
+          value={ effectiveDateTime ? effectiveDateTime : ''}    
+          onChange={ this.changeState.bind(this, 'date')}      
           />
       );
     }
   }
+  setHint(text){
+    if(this.props.showHints !== false){
+      return text;
+    } else {
+      return '';
+    }
+  }
   render() {
     if(process.env.NODE_ENV === "test") console.log('ImmunizationDetail.render()', this.state)
-    let formData = this.state.form;
+    let formData = this.data.form;
 
     return (
       <div id={this.props.id} className="immunizationDetail">
@@ -139,7 +148,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'identifier', '') }
                 onChange={ this.changeState.bind(this, 'identifier')}
                 floatingLabelFixed={true}
-                hintText='Measles, Mumps, and Rubella'
+                hintText={this.setHint('Measles, Mumps, and Rubella')}
                 fullWidth
                 /><br/>
             </Col>
@@ -147,12 +156,12 @@ export class ImmunizationDetail extends React.Component {
               <TextField
                 id='vaccineCodeInput'
                 ref='vaccineCode'
-                name='vaccineCode'
+                name='vaccineCode'ß
                 floatingLabelText='Vaccine Code'
                 value={ get(formData, 'vaccineCode', '') }
                 onChange={ this.changeState.bind(this, 'vaccineCode')}
                 floatingLabelFixed={true}
-                hintText='MMR'
+                hintText={this.setHint('MMR')}
                 fullWidth
                 /><br/>
             </Col>
@@ -165,7 +174,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'status', '') }
                 onChange={ this.changeState.bind(this, 'status')}
                 floatingLabelFixed={true}
-                hintText='in-progress | on-hold | completed'
+                hintText={this.setHint('in-progress | on-hold | completed')}
                 fullWidth
                 /><br/>
             </Col>
@@ -180,7 +189,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'patientDisplay', '') }
                 onChange={ this.changeState.bind(this, 'patientDisplay')}
                 floatingLabelFixed={true}
-                hintText='Jane Doe'
+                hintText={this.setHint('Jane Doe')}
                 fullWidth
                 /><br/>
             </Col>
@@ -193,7 +202,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'patientReference', '') }
                 onChange={ this.changeState.bind(this, 'patientReference')}
                 floatingLabelFixed={true}
-                hintText='Patient/1234567890'
+                hintText={this.setHint('Patient/1234567890')}
                 fullWidth
                 /><br/>
             </Col>
@@ -206,7 +215,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'performerDisplay', '') }
                 onChange={ this.changeState.bind(this, 'performerDisplay')}
                 floatingLabelFixed={true}
-                hintText='Nurse Jackie'
+                hintText={this.setHint('Nurse Jackie')}
                 fullWidth
                 /><br/>
             </Col>
@@ -219,7 +228,7 @@ export class ImmunizationDetail extends React.Component {
                 value={ get(formData, 'performerReference', '') }
                 onChange={ this.changeState.bind(this, 'performerReference')}
                 floatingLabelFixed={true}
-                hintText='Practitioner/555'
+                hintText={this.setHint('Practitioner/555')}
                 fullWidth
                 /><br/>
             </Col>
@@ -443,11 +452,18 @@ export class ImmunizationDetail extends React.Component {
   }
 }
 
-
 ImmunizationDetail.propTypes = {
   id: PropTypes.string,
+  fhirVersion: PropTypes.string,
   immunizationId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
-  immunization: PropTypes.oneOfType([PropTypes.object, PropTypes.bool])
+  immunization: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
+  showPatientInputs: PropTypes.bool,
+  showHints: PropTypes.bool,
+  onInsert: PropTypes.func,
+  onUpdate: PropTypes.func,
+  onRemove: PropTypes.func,
+  onCancel: PropTypes.func
 };
+
 ReactMixin(ImmunizationDetail.prototype, ReactMeteorData);
 export default ImmunizationDetail;

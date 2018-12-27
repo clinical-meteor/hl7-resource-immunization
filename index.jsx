@@ -2,6 +2,7 @@
 
 import ImmunizationsPage from './client/ImmunizationsPage';
 import ImmunizationsTable from './client/ImmunizationsTable';
+import ImmunizationDetail from './client/ImmunizationDetail';
 import { Immunization, Immunizations, ImmunizationSchema } from './lib/Immunizations';
 
 var DynamicRoutes = [{
@@ -22,7 +23,6 @@ export {
   DynamicRoutes, 
 
   ImmunizationsPage,
-  ImmunizationsTable
+  ImmunizationsTable,
+  ImmunizationDetail
 };
-
-
