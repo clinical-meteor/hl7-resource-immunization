@@ -1,6 +1,6 @@
 Package.describe({
   name: 'clinical:hl7-resource-immunization',
-  version: '1.2.12',
+  version: '1.3.1',
   summary: 'HL7 FHIR Resource - Immunization',
   git: 'https://github.com/clinical-meteor/hl7-resource-immunization',
   documentation: 'README.md'
