@@ -82,20 +82,66 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderPatientNameHeader(){
-    if (!this.props.hidePatient) {
+
+  renderIdentifierHeader(){
+    if (!this.props.hideIdentifier) {
       return (
-        <th className='patientDisplay'>patient</th>
+        <th className="identifier">Identifier</th>
       );
     }
   }
-  renderPatientName(patientDisplay ){
-    if (!this.props.hidePatient) {
+  renderIdentifier(allergyIntolerance){
+    if (!this.props.hideIdentifier) {
+      
       return (
-        <td className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</td>
+        <td className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</td>       );
+    }
+  }
+  renderStatusHeader(){
+    if (!this.props.hideStatus) {
+      return (
+        <th className="status">Status</th>
       );
     }
   }
+  renderStatus(allergyIntolerance){
+    if (!this.props.hideStatus) {
+      
+      return (
+        <td className='status'>{ get(allergyIntolerance, 'status') }</td>       );
+    }
+  }
+
+  renderPatientHeader(){
+    if (!this.props.hidePatient) {
+      return (
+        <th className="patient">Patient</th>
+      );
+    }
+  }
+  renderPatient(allergyIntolerance){
+    if (!this.props.hidePatient) {
+      
+      return (
+        <td className='patient'>{ get(allergyIntolerance, 'patient.display') }</td>       );
+    }
+  }
+  renderPerformerHeader(){
+    if (!this.props.hidePerformer) {
+      return (
+        <th className="performer">Performer</th>
+      );
+    }
+  }
+  renderPerformer(allergyIntolerance){
+    if (!this.props.hidePerformer) {
+      
+      return (
+        <td className='performer'>{ get(allergyIntolerance, 'performer.display') }</td>       );
+    }
+  }
+
+
   rowClick(id){
     Session.set('immunizationsUpsert', false);
     Session.set('selectedImmunizationId', id);
@@ -135,7 +181,7 @@ export class ImmunizationsTable extends React.Component {
     }
   } 
   render () {
-    console.log('this.data', this.data)
+    // console.log('this.data', this.data)
 
     let tableRows = [];
     for (var i = 0; i < this.data.immunizations.length; i++) {
@@ -153,17 +199,19 @@ export class ImmunizationsTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
-          { this.renderToggle() }
-          { this.renderActionIcons() }
-          { this.renderIdentifier(newRow.identifier) }
-          { this.renderPatientName(newRow.patientDisplay ) } 
-
+          { this.renderToggle(this.data.immunizations[i]) }
+          { this.renderIdentifier(this.data.immunizations[i]) }
           {/* <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td> */}
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
-          <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
-          {/* <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td> */}
-          <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td>
-          { this.renderDate(this.data.displayDates, newRow.derate) }
+
+          { this.renderStatus(this.data.immunizations[i]) }
+          { this.renderPatient(this.data.immunizations[i]) }
+          { this.renderPerformer(this.data.immunizations[i]) }
+
+          {/* <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
+          <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td>
+          <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td> */}
+          { this.renderDate(newRow.date) }
         </tr>
       )
     }
@@ -173,15 +221,20 @@ export class ImmunizationsTable extends React.Component {
         <thead>
           <tr>
             { this.renderToggleHeader() }
-            { this.renderActionIconsHeader() }
-            { this.renderIdentifier() }
-            { this.renderPatientNameHeader() }
-            {/* <th className='identifier' style={this.displayOnMobile()} >Identifier</th> */}
-            <th className='vaccineCode'>Vaccine Code</th>
-            <th className='status' style={this.displayOnMobile()} >Status</th>
-            {/* <th className='patient' style={this.displayOnMobile()} >Patient</th> */}
-            <th className='performer' style={this.displayOnMobile()} >Performer</th>
-            { this.renderDateHeader(this.data.displayDates) }
+            { this.renderIdentifierHeader() }
+            {/* <th className='identifier' style={this.displayOnMobile()} >identifier</th> */}
+
+            <th className='vaccineCode'>vaccineCode</th>
+
+            {/* <th className='status' style={this.displayOnMobile()} >status</th>
+            <th className='patient' style={this.displayOnMobile()} >patient</th>
+            <th className='performer' style={this.displayOnMobile()} >performer</th> */}
+
+            { this.renderStatusHeader() }
+            { this.renderPatientHeader() }
+            { this.renderPerformerHeader() }
+
+            { this.renderDateHeader() }
           </tr>
         </thead>
         <tbody>
@@ -193,18 +246,22 @@ export class ImmunizationsTable extends React.Component {
 }
 
 ImmunizationsTable.propTypes = {
-  data: PropTypes.array,
-  query: PropTypes.object,
-  paginationLimit: PropTypes.number,
+  id: PropTypes.string,
+  fhirVersion: PropTypes.string,
+
+  hideToggle: PropTypes.bool,
+  hideIdentifier: PropTypes.bool,
+  hideDate: PropTypes.bool,
+  hideStatus: PropTypes.bool,
   hidePatient: PropTypes.bool,
-  // hideIdentifier: PropTypes.bool,
-  // hideToggle: PropTypes.bool,
-  // hideActionIcons: PropTypes.bool,
-  // hideType: PropTypes.bool,
-  // hideCategory: PropTypes.bool,
-  // hideStatus: PropTypes.bool,
-  // hideVerification: PropTypes.bool,
-  enteredInError: PropTypes.bool
+  hidePerformer: PropTypes.bool,
+ 
+  limit: PropTypes.number,
+  query: PropTypes.object,
+  patient: PropTypes.string,
+  patientDisplay: PropTypes.string,
+  sort: PropTypes.string
+  // onPatientClick: PropTypes.func
 };
 ReactMixin(ImmunizationsTable.prototype, ReactMeteorData);
 export default ImmunizationsTable;
