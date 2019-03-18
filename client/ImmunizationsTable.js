@@ -1,11 +1,13 @@
-import { Card, CardActions, CardMedia, CardText, CardTitle } from 'material-ui/Card';
+import { Card, CardActions, CardMedia, CardText, CardTitle, Toggle } from 'material-ui';
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
 import { Table } from 'react-bootstrap';
-import Toggle from 'material-ui/Toggle';
 import { get } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
 
 export class ImmunizationsTable extends React.Component {
 
@@ -48,15 +50,15 @@ export class ImmunizationsTable extends React.Component {
     }
     return style;
   }
-  renderTogglesHeader(displayToggle){
-    if (displayToggle) {
+  renderToggleHeader(){
+    if (!this.props.hideToggle) {
       return (
-        <th className="toggle">toggle</th>
+        <th className="toggle">Toggle</th>
       );
     }
   }
-  renderToggles(displayToggle, patientId ){
-    if (displayToggle) {
+  renderToggle(patientId){
+    if (!this.props.hideToggle) {
       return (
         <td className="toggle">
             <Toggle
@@ -66,26 +68,72 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderDateHeader(displayDates){
-    if (displayDates) {
+  renderDateHeader(){
+    if (!this.props.hideDates) {
       return (
-        <th className='date'>date</th>
+        <th className='date'>Date</th>
       );
     }
   }
-  renderDate(displayDates, newDate ){
-    if (displayDates) {
+  renderDate(newDate ){
+    if (!this.props.hideDates) {
       return (
         <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
       );
     }
   }
-
+  renderPatientNameHeader(){
+    if (!this.props.hidePatient) {
+      return (
+        <th className='patientDisplay'>patient</th>
+      );
+    }
+  }
+  renderPatientName(patientDisplay ){
+    if (!this.props.hidePatient) {
+      return (
+        <td className='patientDisplay' style={{minWidth: '140px'}}>{ patientDisplay }</td>
+      );
+    }
+  }
   rowClick(id){
     Session.set('immunizationsUpsert', false);
     Session.set('selectedImmunizationId', id);
     Session.set('immunizationPageTabIndex', 2);
   };
+  renderActionIconsHeader(){
+    if (!this.props.hideActionIcons) {
+      return (
+        <th className='actionIcons' style={{minWidth: '120px'}}>Actions</th>
+      );
+    }
+  }
+  renderActionIcons(actionIcons ){
+    if (!this.props.hideActionIcons) {
+      return (
+        <td className='actionIcons' style={{minWidth: '120px'}}>
+          <FaLock style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaTags style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaCode style={{marginLeft: '2px', marginRight: '2px'}} />
+          <FaPuzzlePiece style={{marginLeft: '2px', marginRight: '2px'}} />          
+        </td>
+      );
+    }
+  } 
+  renderIdentifierHeader(){
+    if (!this.props.hideIdentifier) {
+      return (
+        <th className='identifier'>Identifier</th>
+      );
+    }
+  }
+  renderIdentifier(identifier ){
+    if (!this.props.hideIdentifier) {
+      return (
+        <td className='identifier'>{ identifier }</td>
+      );
+    }
+  } 
   render () {
     console.log('this.data', this.data)
 
@@ -105,11 +153,15 @@ export class ImmunizationsTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
-          { this.renderToggles(this.data.displayToggle, this.data.immunizations[i]) }
-          <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td>
+          { this.renderToggle() }
+          { this.renderActionIcons() }
+          { this.renderIdentifier(newRow.identifier) }
+          { this.renderPatientName(newRow.patientDisplay ) } 
+
+          {/* <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td> */}
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
           <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
-          <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td>
+          {/* <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td> */}
           <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td>
           { this.renderDate(this.data.displayDates, newRow.derate) }
         </tr>
@@ -120,12 +172,15 @@ export class ImmunizationsTable extends React.Component {
       <Table id='immunizationsTable' hover >
         <thead>
           <tr>
-            { this.renderTogglesHeader(this.data.displayToggle) }
-            <th className='identifier' style={this.displayOnMobile()} >identifier</th>
-            <th className='vaccineCode'>vaccineCode</th>
-            <th className='status' style={this.displayOnMobile()} >status</th>
-            <th className='patient' style={this.displayOnMobile()} >patient</th>
-            <th className='performer' style={this.displayOnMobile()} >performer</th>
+            { this.renderToggleHeader() }
+            { this.renderActionIconsHeader() }
+            { this.renderIdentifier() }
+            { this.renderPatientNameHeader() }
+            {/* <th className='identifier' style={this.displayOnMobile()} >Identifier</th> */}
+            <th className='vaccineCode'>Vaccine Code</th>
+            <th className='status' style={this.displayOnMobile()} >Status</th>
+            {/* <th className='patient' style={this.displayOnMobile()} >Patient</th> */}
+            <th className='performer' style={this.displayOnMobile()} >Performer</th>
             { this.renderDateHeader(this.data.displayDates) }
           </tr>
         </thead>
@@ -137,6 +192,19 @@ export class ImmunizationsTable extends React.Component {
   }
 }
 
-
+ImmunizationsTable.propTypes = {
+  data: PropTypes.array,
+  query: PropTypes.object,
+  paginationLimit: PropTypes.number,
+  hidePatient: PropTypes.bool,
+  // hideIdentifier: PropTypes.bool,
+  // hideToggle: PropTypes.bool,
+  // hideActionIcons: PropTypes.bool,
+  // hideType: PropTypes.bool,
+  // hideCategory: PropTypes.bool,
+  // hideStatus: PropTypes.bool,
+  // hideVerification: PropTypes.bool,
+  enteredInError: PropTypes.bool
+};
 ReactMixin(ImmunizationsTable.prototype, ReactMeteorData);
 export default ImmunizationsTable;
