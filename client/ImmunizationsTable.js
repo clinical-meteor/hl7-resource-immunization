@@ -57,7 +57,7 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderToggle(patientId){
+  renderToggle(){
     if (!this.props.hideToggle) {
       return (
         <td className="toggle">
@@ -69,14 +69,14 @@ export class ImmunizationsTable extends React.Component {
     }
   }
   renderDateHeader(){
-    if (!this.props.hideDates) {
+    if (!this.props.hideDate) {
       return (
         <th className='date'>Date</th>
       );
     }
   }
   renderDate(newDate ){
-    if (!this.props.hideDates) {
+    if (!this.props.hideDate) {
       return (
         <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
       );
@@ -90,11 +90,11 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderIdentifier(allergyIntolerance){
+  renderIdentifier(immunization){
     if (!this.props.hideIdentifier) {
       
       return (
-        <td className='identifier'>{ get(allergyIntolerance, 'identifier[0].value') }</td>       );
+        <td className='identifier'>{ get(immunization, 'identifier[0].value') }</td>       );
     }
   }
   renderStatusHeader(){
@@ -104,11 +104,11 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderStatus(allergyIntolerance){
+  renderStatus(status){
     if (!this.props.hideStatus) {
       
       return (
-        <td className='status'>{ get(allergyIntolerance, 'status') }</td>       );
+        <td className='status'>{ status }</td>       );
     }
   }
 
@@ -119,11 +119,11 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderPatient(allergyIntolerance){
+  renderPatient(immunization){
     if (!this.props.hidePatient) {
       
       return (
-        <td className='patient'>{ get(allergyIntolerance, 'patient.display') }</td>       );
+        <td className='patient'>{ get(immunization, 'patient.display') }</td>       );
     }
   }
   renderPerformerHeader(){
@@ -133,11 +133,11 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderPerformer(allergyIntolerance){
+  renderPerformer(immunization){
     if (!this.props.hidePerformer) {
       
       return (
-        <td className='performer'>{ get(allergyIntolerance, 'performer.display') }</td>       );
+        <td className='performer'>{ get(immunization, 'performer.display') }</td>       );
     }
   }
 
@@ -199,18 +199,19 @@ export class ImmunizationsTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
-          { this.renderToggle(this.data.immunizations[i]) }
-          { this.renderIdentifier(this.data.immunizations[i]) }
-          {/* <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td> */}
+          { this.renderToggle() }
+          { this.renderIdentifier( newRow.identifier ) }
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
 
-          { this.renderStatus(this.data.immunizations[i]) }
+          { this.renderStatus( newRow.status ) }
           { this.renderPatient(this.data.immunizations[i]) }
           { this.renderPerformer(this.data.immunizations[i]) }
 
+          {/* <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td> */}
           {/* <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
           <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td>
           <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td> */}
+
           { this.renderDate(newRow.date) }
         </tr>
       )
