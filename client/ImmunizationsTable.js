@@ -8,6 +8,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { FaTags, FaCode, FaPuzzlePiece, FaLock  } from 'react-icons/fa';
+import { GoTrashcan } from 'react-icons/go'
 
 export class ImmunizationsTable extends React.Component {
 
@@ -53,7 +54,7 @@ export class ImmunizationsTable extends React.Component {
   renderToggleHeader(){
     if (!this.props.hideToggle) {
       return (
-        <th className="toggle">Toggle</th>
+        <th className="toggle" style={{width: '60px'}} >Toggle</th>
       );
     }
   }
@@ -154,14 +155,19 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   }
-  renderActionIcons(actionIcons ){
+  renderActionIcons(immunization ){
     if (!this.props.hideActionIcons) {
+      let iconStyle = {
+        marginLeft: '4px', 
+        marginRight: '4px', 
+        marginTop: '4px', 
+        fontSize: '120%'
+      }
+
       return (
         <td className='actionIcons' style={{minWidth: '120px'}}>
-          <FaLock style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaTags style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaCode style={{marginLeft: '2px', marginRight: '2px'}} />
-          <FaPuzzlePiece style={{marginLeft: '2px', marginRight: '2px'}} />          
+          <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, immunization)} />
+          <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, immunization._id)} />  
         </td>
       );
     }
@@ -180,6 +186,18 @@ export class ImmunizationsTable extends React.Component {
       );
     }
   } 
+  removeRecord(_id){
+    console.log('Remove patient ', _id)
+    Immunizations._collection.remove({_id: _id})
+  }
+  showSecurityDialog(immunization){
+    console.log('showSecurityDialog', immunization)
+
+    Session.set('securityDialogResourceJson', Immunizations.findOne(get(immunization, '_id')));
+    Session.set('securityDialogResourceType', 'Immunization');
+    Session.set('securityDialogResourceId', get(immunization, '_id'));
+    Session.set('securityDialogOpen', true);
+  }
   render () {
     // console.log('this.data', this.data)
 
@@ -197,9 +215,18 @@ export class ImmunizationsTable extends React.Component {
         date: get(this.data.immunizations[i], 'date')
       }
 
+      let rowStyle = {
+        cursor: 'pointer',
+        textAlign: 'left'
+      }
+      if(get(this.data.immunizations[i], 'modifierExtension[0]')){
+        rowStyle.color = "orange";
+      }
+
       tableRows.push(
-        <tr key={i} className="immunizationRow" style={{cursor: "pointer"}} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
+        <tr key={i} className="immunizationRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
           { this.renderToggle() }
+          { this.renderActionIcons(this.data.immunizations[i]) }
           { this.renderIdentifier( newRow.identifier ) }
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
 
@@ -222,6 +249,7 @@ export class ImmunizationsTable extends React.Component {
         <thead>
           <tr>
             { this.renderToggleHeader() }
+            { this.renderActionIconsHeader() }
             { this.renderIdentifierHeader() }
             {/* <th className='identifier' style={this.displayOnMobile()} >identifier</th> */}
 
