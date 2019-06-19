@@ -1,4 +1,4 @@
-import { Card, CardActions, CardMedia, CardText, CardTitle, Toggle } from 'material-ui';
+import { Card, CardActions, CardMedia, CardText, CardTitle, Checkbox } from 'material-ui';
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
@@ -19,12 +19,12 @@ export class ImmunizationsTable extends React.Component {
       },
       selected: [],
       immunizations: [],
-      displayToggle: false,
+      displayCheckbox: false,
       displayDates: false
     }
 
-    if(this.props.displayToggles){
-      data.displayToggle = this.props.displayToggles;
+    if(this.props.displayCheckboxs){
+      data.displayCheckbox = this.props.displayCheckboxs;
     }
     if(this.props.displayDates){
       data.displayDates = this.props.displayDates;
@@ -51,19 +51,19 @@ export class ImmunizationsTable extends React.Component {
     }
     return style;
   }
-  renderToggleHeader(){
-    if (!this.props.hideToggle) {
+  renderCheckboxHeader(){
+    if (!this.props.hideCheckboxes) {
       return (
-        <th className="toggle" style={{width: '60px'}} >Toggle</th>
+        <th className="toggle" style={{width: '60px'}} >Checkbox</th>
       );
     }
   }
-  renderToggle(){
-    if (!this.props.hideToggle) {
+  renderCheckbox(){
+    if (!this.props.hideCheckboxes) {
       return (
         <td className="toggle">
-            <Toggle
-              defaultToggled={true}
+            <Checkbox
+              defaultCheckbox={true}
             />
           </td>
       );
@@ -151,7 +151,7 @@ export class ImmunizationsTable extends React.Component {
   renderActionIconsHeader(){
     if (!this.props.hideActionIcons) {
       return (
-        <th className='actionIcons' style={{minWidth: '120px'}}>Actions</th>
+        <th className='actionIcons' style={{width: '100px'}}>Actions</th>
       );
     }
   }
@@ -225,7 +225,7 @@ export class ImmunizationsTable extends React.Component {
 
       tableRows.push(
         <tr key={i} className="immunizationRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
-          { this.renderToggle() }
+          { this.renderCheckbox() }
           { this.renderActionIcons(this.data.immunizations[i]) }
           { this.renderIdentifier( newRow.identifier ) }
           <td className='vaccineCode'>{ newRow.vaccineCode }</td>
@@ -248,12 +248,12 @@ export class ImmunizationsTable extends React.Component {
       <Table id='immunizationsTable' hover >
         <thead>
           <tr>
-            { this.renderToggleHeader() }
+            { this.renderCheckboxHeader() }
             { this.renderActionIconsHeader() }
             { this.renderIdentifierHeader() }
             {/* <th className='identifier' style={this.displayOnMobile()} >identifier</th> */}
 
-            <th className='vaccineCode'>vaccineCode</th>
+            <th className='vaccineCode'>Vaccine Code</th>
 
             {/* <th className='status' style={this.displayOnMobile()} >status</th>
             <th className='patient' style={this.displayOnMobile()} >patient</th>
@@ -278,7 +278,7 @@ ImmunizationsTable.propTypes = {
   id: PropTypes.string,
   fhirVersion: PropTypes.string,
 
-  hideToggle: PropTypes.bool,
+  hideCheckboxes: PropTypes.bool,
   hideIdentifier: PropTypes.bool,
   hideDate: PropTypes.bool,
   hideStatus: PropTypes.bool,
