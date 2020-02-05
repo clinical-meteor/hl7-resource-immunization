@@ -1,16 +1,22 @@
-import { CardActions, CardText } from 'material-ui/Card';
+import { 
+  Grid,
+  Card,
+  Button,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Typography,
+  TextField,
+  DatePicker
+} from '@material-ui/core';
 
-import DatePicker from 'material-ui/DatePicker';
-import RaisedButton from 'material-ui/RaisedButton';
+
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import TextField from 'material-ui/TextField';
-import { browserHistory } from 'react-router';
 
 import { get, set } from 'lodash';
 import PropTypes from 'prop-types';
-import { Col, Row } from 'react-bootstrap';
 
 
 Session.setDefault('selectedImmunization', false);
@@ -112,16 +118,17 @@ export class ImmunizationDetail extends React.Component {
       effectiveDateTime = moment(effectiveDateTime);
     }
     if (showDatePicker) {
-      return (
-        <DatePicker 
-          name='datePicker'
-          hintText={this.setHint("Date of Administration" )}
-          container="inline" 
-          mode="landscape"
-          value={ effectiveDateTime ? effectiveDateTime : ''}    
-          onChange={ this.changeState.bind(this, 'date')}      
-          />
-      );
+      return(<div></div>)
+      // return (
+      //   <DatePicker 
+      //     name='datePicker'
+      //     hintText={this.setHint("Date of Administration" )}
+      //     container="inline" 
+      //     mode="landscape"
+      //     value={ effectiveDateTime ? effectiveDateTime : ''}    
+      //     onChange={ this.changeState.bind(this, 'date')}      
+      //     />
+      // );
     }
   }
   setHint(text){
@@ -137,7 +144,7 @@ export class ImmunizationDetail extends React.Component {
 
     return (
       <div id={this.props.id} className="immunizationDetail">
-        <CardText>
+        <CardContent>
           <Row>
             <Col md={6}>
               <TextField
@@ -238,7 +245,7 @@ export class ImmunizationDetail extends React.Component {
             { this.renderDatePicker(this.data.showDatePicker, get(this, 'data.immunizationForm.datePicker') ) }
             <br/>
 
-        </CardText>
+        </CardContent>
         <CardActions>
           { this.determineButtons(this.data.immunizationId) }
         </CardActions>
@@ -250,13 +257,13 @@ export class ImmunizationDetail extends React.Component {
     if (immunizationId) {
       return (
         <div>
-          <RaisedButton id="updateImmunizationButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} />
-          <RaisedButton id="deleteImmunizationButton" label="Delete" onClick={this.handleDeleteButton.bind(this)} />
+          <Button id="updateImmunizationButton" primary={true} onClick={this.handleSaveButton.bind(this)} style={{marginRight: '20px'}} >Save</Button>
+          <Button id="deleteImmunizationButton" onClick={this.handleDeleteButton.bind(this)} >Delete</Button>
         </div>
       );
     } else {
       return(
-        <RaisedButton id="saveImmunizationButton" label="Save" primary={true} onClick={this.handleSaveButton.bind(this)} />
+        <Button id="saveImmunizationButton" primary={true} onClick={this.handleSaveButton.bind(this)} >Save</Button>
       );
     }
   }
@@ -381,14 +388,14 @@ export class ImmunizationDetail extends React.Component {
           if (error) {
             console.log("error", error);
 
-            Bert.alert(error.reason, 'danger');
+            // Bert.alert(error.reason, 'danger');
           }
           if (result) {
             HipaaLogger.logEvent({eventType: "update", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Immunizations", recordId: self.props.immunizationId});
             Session.set('immunizationPageTabIndex', 1);
             Session.set('selectedImmunization', false);
             Session.set('immunizationUpsert', false);
-            Bert.alert('Immunization updated!', 'success');
+            // Bert.alert('Immunization updated!', 'success');
           }
         });
     } else {
@@ -420,13 +427,13 @@ export class ImmunizationDetail extends React.Component {
       Immunizations._collection.insert(fhirImmunizationData, function(error, result) {
         if (error) {
           console.log("error", error);
-          Bert.alert(error.reason, 'danger');
+          // Bert.alert(error.reason, 'danger');
         }
         if (result) {
           HipaaLogger.logEvent({eventType: "create", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Immunizations", recordId: result});
           Session.set('immunizationPageTabIndex', 1);
           Session.set('selectedImmunization', false);
-          Bert.alert('Immunization added!', 'success');
+          // Bert.alert('Immunization added!', 'success');
         }
       });
     }
@@ -440,13 +447,13 @@ export class ImmunizationDetail extends React.Component {
     let self = this;
     Immunizations._collection.remove({_id: this.props.immunizationId}, function(error, result){
       if (error) {
-        Bert.alert(error.reason, 'danger');
+        // Bert.alert(error.reason, 'danger');
       }
       if (result) {
         HipaaLogger.logEvent({eventType: "delete", userId: Meteor.userId(), userName: Meteor.user().fullName(), collectionName: "Immunizations", recordId: self.props.immunizationId});
         Session.set('immunizationPageTabIndex', 1);
         Session.set('selectedImmunization', false);
-        Bert.alert('Immunization removed!', 'success');
+        // Bert.alert('Immunization removed!', 'success');
       }
     });
   }

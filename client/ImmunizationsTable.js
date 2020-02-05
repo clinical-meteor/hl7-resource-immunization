@@ -1,9 +1,19 @@
-import { Card, CardActions, CardMedia, CardText, CardTitle, Checkbox } from 'material-ui';
+import { 
+  Grid, 
+  Checkbox,
+  Button,
+  Table,
+  TableRow,
+  TableHeader,
+  TableBody,
+  TableCell,
+  Box
+} from '@material-ui/core';
+
 
 import React from 'react';
 import { ReactMeteorData } from 'meteor/react-meteor-data';
 import ReactMixin from 'react-mixin';
-import { Table } from 'react-bootstrap';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -54,32 +64,32 @@ export class ImmunizationsTable extends React.Component {
   renderCheckboxHeader(){
     if (!this.props.hideCheckboxes) {
       return (
-        <th className="toggle" style={{width: '60px'}} >Checkbox</th>
+        <TableCell className="toggle" style={{width: '60px'}} >Checkbox</TableCell>
       );
     }
   }
   renderCheckbox(){
     if (!this.props.hideCheckboxes) {
       return (
-        <td className="toggle">
+        <TableCell className="toggle">
             <Checkbox
-              defaultCheckbox={true}
+              defaultChecked={true}
             />
-          </td>
+          </TableCell>
       );
     }
   }
   renderDateHeader(){
     if (!this.props.hideDate) {
       return (
-        <th className='date'>Date</th>
+        <TableCell className='date'>Date</TableCell>
       );
     }
   }
   renderDate(newDate ){
     if (!this.props.hideDate) {
       return (
-        <td className='date'>{ moment(newDate).format('YYYY-MM-DD') }</td>
+        <TableCell className='date'>{ moment(newDate).format('YYYY-MM-DD') }</TableCell>
       );
     }
   }
@@ -87,7 +97,7 @@ export class ImmunizationsTable extends React.Component {
   renderIdentifierHeader(){
     if (!this.props.hideIdentifier) {
       return (
-        <th className="identifier">Identifier</th>
+        <TableCell className="identifier">Identifier</TableCell>
       );
     }
   }
@@ -95,13 +105,13 @@ export class ImmunizationsTable extends React.Component {
     if (!this.props.hideIdentifier) {
       
       return (
-        <td className='identifier'>{ get(immunization, 'identifier[0].value') }</td>       );
+        <TableCell className='identifier'>{ get(immunization, 'identifier[0].value') }</TableCell>       );
     }
   }
   renderStatusHeader(){
     if (!this.props.hideStatus) {
       return (
-        <th className="status">Status</th>
+        <TableCell className="status">Status</TableCell>
       );
     }
   }
@@ -109,14 +119,14 @@ export class ImmunizationsTable extends React.Component {
     if (!this.props.hideStatus) {
       
       return (
-        <td className='status'>{ status }</td>       );
+        <TableCell className='status'>{ status }</TableCell>       );
     }
   }
 
   renderPatientHeader(){
     if (!this.props.hidePatient) {
       return (
-        <th className="patient">Patient</th>
+        <TableCell className="patient">Patient</TableCell>
       );
     }
   }
@@ -124,13 +134,13 @@ export class ImmunizationsTable extends React.Component {
     if (!this.props.hidePatient) {
       
       return (
-        <td className='patient'>{ get(immunization, 'patient.display') }</td>       );
+        <TableCell className='patient'>{ get(immunization, 'patient.display') }</TableCell>       );
     }
   }
   renderPerformerHeader(){
     if (!this.props.hidePerformer) {
       return (
-        <th className="performer">Performer</th>
+        <TableCell className="performer">Performer</TableCell>
       );
     }
   }
@@ -138,7 +148,7 @@ export class ImmunizationsTable extends React.Component {
     if (!this.props.hidePerformer) {
       
       return (
-        <td className='performer'>{ get(immunization, 'performer.display') }</td>       );
+        <TableCell className='performer'>{ get(immunization, 'performer.display') }</TableCell>       );
     }
   }
 
@@ -151,7 +161,7 @@ export class ImmunizationsTable extends React.Component {
   renderActionIconsHeader(){
     if (!this.props.hideActionIcons) {
       return (
-        <th className='actionIcons' style={{width: '100px'}}>Actions</th>
+        <TableCell className='actionIcons' style={{width: '100px'}}>Actions</TableCell>
       );
     }
   }
@@ -165,24 +175,24 @@ export class ImmunizationsTable extends React.Component {
       }
 
       return (
-        <td className='actionIcons' style={{minWidth: '120px'}}>
+        <TableCell className='actionIcons' style={{minWidth: '120px'}}>
           <FaTags style={iconStyle} onClick={this.showSecurityDialog.bind(this, immunization)} />
           <GoTrashcan style={iconStyle} onClick={this.removeRecord.bind(this, immunization._id)} />  
-        </td>
+        </TableCell>
       );
     }
   } 
   renderIdentifierHeader(){
     if (!this.props.hideIdentifier) {
       return (
-        <th className='identifier'>Identifier</th>
+        <TableCell className='identifier'>Identifier</TableCell>
       );
     }
   }
   renderIdentifier(identifier ){
     if (!this.props.hideIdentifier) {
       return (
-        <td className='identifier'>{ identifier }</td>
+        <TableCell className='identifier'>{ identifier }</TableCell>
       );
     }
   } 
@@ -224,48 +234,48 @@ export class ImmunizationsTable extends React.Component {
       }
 
       tableRows.push(
-        <tr key={i} className="immunizationRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
+        <TableRow key={i} className="immunizationRow" style={rowStyle} onClick={ this.rowClick.bind('this', this.data.immunizations[i]._id)} >
           { this.renderCheckbox() }
           { this.renderActionIcons(this.data.immunizations[i]) }
           { this.renderIdentifier( newRow.identifier ) }
-          <td className='vaccineCode'>{ newRow.vaccineCode }</td>
+          <TableCell className='vaccineCode'>{ newRow.vaccineCode }</TableCell>
 
           { this.renderStatus( newRow.status ) }
           { this.renderPatient(this.data.immunizations[i]) }
           { this.renderPerformer(this.data.immunizations[i]) }
 
-          {/* <td className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</td> */}
-          {/* <td className='status' style={this.displayOnMobile()}>{ newRow.status }</td>
-          <td className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</td>
-          <td className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</td> */}
+          {/* <TableCell className='identifier' style={this.displayOnMobile()} >{ newRow.identifier }</TableCell> */}
+          {/* <TableCell className='status' style={this.displayOnMobile()}>{ newRow.status }</TableCell>
+          <TableCell className='patient' style={this.displayOnMobile()} >{ newRow.patientDisplay }</TableCell>
+          <TableCell className='performer' style={this.displayOnMobile()} >{ newRow.performerDisplay }</TableCell> */}
 
           { this.renderDate(newRow.date) }
-        </tr>
+        </TableRow>
       )
     }
 
     return(
       <Table id='immunizationsTable' hover >
-        <thead>
-          <tr>
+        <TableHead>
+          <TableRow>
             { this.renderCheckboxHeader() }
             { this.renderActionIconsHeader() }
             { this.renderIdentifierHeader() }
-            {/* <th className='identifier' style={this.displayOnMobile()} >identifier</th> */}
+            {/* <TableCell className='identifier' style={this.displayOnMobile()} >identifier</TableCell> */}
 
-            <th className='vaccineCode'>Vaccine Code</th>
+            <TableCell className='vaccineCode'>Vaccine Code</TableCell>
 
-            {/* <th className='status' style={this.displayOnMobile()} >status</th>
-            <th className='patient' style={this.displayOnMobile()} >patient</th>
-            <th className='performer' style={this.displayOnMobile()} >performer</th> */}
+            {/* <TableCell className='status' style={this.displayOnMobile()} >status</TableCell>
+            <TableCell className='patient' style={this.displayOnMobile()} >patient</TableCell>
+            <TableCell className='performer' style={this.displayOnMobile()} >performer</TableCell> */}
 
             { this.renderStatusHeader() }
             { this.renderPatientHeader() }
             { this.renderPerformerHeader() }
 
             { this.renderDateHeader() }
-          </tr>
-        </thead>
+          </TableRow>
+        </TableHead>
         <tbody>
           { tableRows }
         </tbody>
